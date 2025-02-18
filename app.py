@@ -14,7 +14,7 @@ db_password = os.environ.get('DB_PASSWORD')
 print(f'db_server: {db_server}')
 
 # SQL Server connection string
-connection_string = f'DRIVER={{SQL SERVER}};SERVER={db_server};DATABASE={db_name};UID={db_user};PWD={db_password};TRUST-CONNECTION=YES'
+connection_string = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={db_server};DATABASE={db_name};UID={db_user};PWD={db_password};TRUST-CONNECTION=YES'
 
 # Function to connect to the database
 def get_db_connection():
