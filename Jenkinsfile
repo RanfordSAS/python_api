@@ -1,6 +1,14 @@
 pipeline {
   agent { label 'principal' }
+  tools {
+    maven '3.8.1'
+  }
   stages {
+    stage('maven') {
+      steps {
+        sh 'mvn --version'
+      }
+    }
     stage('Preparar') {
       steps {
         bat 'echo Directorio actual: %cd%'
