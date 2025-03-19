@@ -7,25 +7,6 @@ pipeline {
   }
 
   stages {
-    // Stage 0: Setup Python and ensure pip is installed
-    stage('Setup Python') {
-      steps {
-        script {
-          // Check if Python is installed
-          def pythonInstalled = bat(script: 'python --version', returnStatus: true) == 0
-          if (!pythonInstalled) {
-            // Install Python (example for Windows)
-            bat 'curl -o python-installer.exe https://www.python.org/ftp/python/3.9.7/python-3.9.7-amd64.exe'
-            bat 'python-installer.exe /quiet InstallAllUsers=1 PrependPath=1'
-            bat 'del python-installer.exe'
-          }
-
-          // Ensure pip is installed
-          bat 'python -m ensurepip --upgrade'
-        }
-      }
-    }
-
     // Stage 1: Checkout the code from GitHub
     stage('Checkout') {
       steps {
