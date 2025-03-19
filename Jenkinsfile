@@ -1,26 +1,52 @@
 pipeline {
   agent { label 'principal' } // Ensure this agent is a Windows machine
-  tools {
-    maven '3.8.1' // Ensure Maven 3.8.1 is configured in Jenkins for Windows
+
+  environment {
+    // Define the SonarScanner tool name (configured in Jenkins Global Tool Configuration)
+    SONAR_SCANNER_HOME = tool name: 'sq_test', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
   }
+
   stages {
-    stage('Maven Version') {
+    // Stage 1: Checkout the code from GitHub
+    stage('Checkout') {
       steps {
-        bat 'mvn --version' // Use 'bat' for Windows commands
+        git branch: 'main', url: 'https://github.com/RanfordSAS/python_api.git'
       }
     }
-    stage('Preparar') {
+
+    // Stage 2: Install Python dependencies
+    stage('Install Dependencies') {
       steps {
-        bat 'echo Directorio actual: %cd%' // Print current directory
-        bat 'dir' // List files in the current directory
+        bat 'pip install -r requirements.txt'
       }
     }
-    stage('Scan') {
+
+    // Stage 3: Run tests and generate coverage report
+    /*
+    stage('Run Tests') {
       steps {
-        withSonarQubeEnv(installationName: 'sq_test') { // Use SonarQube environment
-          bat 'mvnw.cmd clean org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+        bat 'pytest --cov=./ --cov-report=xml:coverage.xml'
+      }
+    }
+    */
+
+    // Stage 4: Run SonarQube analysis
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv(installationName: 'sq_test') { // 'sq_test' is the name of the SonarQube server configured in Jenkins
+          bat "${SONAR_SCANNER_HOME}\\bin\\sonar-scanner.bat"
         }
       }
+    }
+  }
+
+  // Post-build actions
+  post {
+    success {
+      echo 'SonarQube analysis completed successfully!'
+    }
+    failure {
+      echo 'SonarQube analysis failed.'
     }
   }
 }
