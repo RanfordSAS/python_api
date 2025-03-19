@@ -41,7 +41,10 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         withSonarQubeEnv(installationName: 'sq_test') { // 'sq_test' is the name of the SonarQube server configured in Jenkins
-          bat "${SONAR_SCANNER_HOME}\\bin\\sonar-scanner.bat"
+          bat """
+          ${SONAR_SCANNER_HOME}\\bin\\sonar-scanner.bat \
+          -Dsonar.branch.name=main
+          """
         }
       }
     }
